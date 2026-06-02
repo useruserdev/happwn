@@ -1,0 +1,71 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rust-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust
+        run: rustup toolchain install stable --profile minimal
+      - name: Run crypto tests on real vectors
+        run: cargo test --manifest-path rust/Cargo.toml
+
+  ios:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust + iOS targets
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup target add aarch64-apple-ios aarch64-apple-ios-sim x86_64-apple-ios
+
+      - name: Build XCFramework
+        run: bash scripts/build-xcframework.sh
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: Run tests
+        working-directory: ios
+        run: |
+          xcodebuild test \
+            -project happwn.xcodeproj \
+            -scheme happwn \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Archive (unsigned)
+        working-directory: ios
+        run: |
+          xcodebuild archive \
+            -project happwn.xcodeproj \
+            -scheme happwn \
+            -configuration Release \
+            -archivePath "$PWD/build/happwn.xcarchive" \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+
+      - name: Package .ipa
+        working-directory: ios
+        run: |
+          mkdir -p build/Payload
+          cp -R build/happwn.xcarchive/Products/Applications/happwn.app build/Payload/
+          (cd build && zip -qry happwn.ipa Payload)
+
+      - name: Upload .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: happwn-ipa
+          path: ios/build/happwn.ipa
+          if-no-files-found: error

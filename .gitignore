@@ -1,0 +1,14 @@
+# Rust
+rust/target/
+
+# Generated iOS artifacts
+ios/*.xcodeproj/
+ios/HappwnCrypto.xcframework/
+ios/build/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# internal process docs (not published)
+docs/superpowers/

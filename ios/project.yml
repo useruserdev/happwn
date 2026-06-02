@@ -1,0 +1,49 @@
+name: happwn
+options:
+  bundleIdPrefix: com.happwn
+  deploymentTarget:
+    iOS: "16.0"
+settings:
+  base:
+    GENERATE_INFOPLIST_FILE: YES
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    INFOPLIST_KEY_CFBundleDisplayName: happwn
+    SWIFT_VERSION: "5.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+targets:
+  happwn:
+    type: application
+    platform: iOS
+    sources:
+      - path: happwn
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.happwn.app
+        SWIFT_OBJC_BRIDGING_HEADER: happwn/Happwn-Bridging-Header.h
+    dependencies:
+      - framework: HappwnCrypto.xcframework
+        embed: false
+  happwnTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: happwnTests
+    settings:
+      base:
+        SWIFT_OBJC_BRIDGING_HEADER: happwn/Happwn-Bridging-Header.h
+    dependencies:
+      - target: happwn
+      - framework: HappwnCrypto.xcframework
+        embed: false
+schemes:
+  happwn:
+    build:
+      targets:
+        happwn: all
+        happwnTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - happwnTests
