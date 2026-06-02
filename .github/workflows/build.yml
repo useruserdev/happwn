@@ -17,7 +17,7 @@ jobs:
         run: cargo test --manifest-path rust/Cargo.toml
 
   ios:
-    runs-on: macos-14
+    runs-on: macos-15
     permissions:
       contents: write
     steps:
@@ -41,10 +41,12 @@ jobs:
       - name: Run tests
         working-directory: ios
         run: |
+          DEVICE=$(xcrun simctl list devices available | grep -E "iPhone" | head -1 | sed -E 's/^ *([^(]+) \(.*/\1/' | xargs)
+          echo "Using simulator: $DEVICE"
           xcodebuild test \
             -project happwn.xcodeproj \
             -scheme happwn \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -destination "platform=iOS Simulator,name=$DEVICE" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Archive (unsigned)
