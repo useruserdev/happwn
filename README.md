@@ -74,14 +74,37 @@ cd ios && xcodegen generate && open happwn.xcodeproj
 
 ## Web
 
-A browser version lives in [`web/`](web/) and deploys to GitHub Pages:
+A browser version lives in [`web/`](web/) and is hosted on GitHub Pages:
 **https://useruserdev.github.io/happwn/**
 
-It decrypts `happ://` links client-side. To turn the configs into a subscription URL,
-deploy the Cloudflare Worker in [`worker/`](worker/README.md) (free tier), then paste its
-URL into the site's Settings. The Worker fetches the sub URL with your `User-Agent` and
-`X-HWID` (which a browser cannot send) and hosts the result at
-`https://happwn.<you>.workers.dev/sub/<token>` — a real subscription for any VPN client.
+It decrypts `happ://` links **client-side** (nothing leaves your browser). Decryption
+works immediately, with no setup.
+
+### Build a subscription URL — bring your own Worker
+
+A browser can't send the `Happ` `User-Agent` or do the cross-origin sub fetch, so the
+fetch + hosting runs on a tiny **Cloudflare Worker that you deploy and own** (free tier).
+Everyone uses their own Worker — your configs stay in your own Cloudflare account, not
+ours.
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Worker**, name it `happwn`.
+2. **Edit code** → paste the contents of
+   [`worker/worker.js`](worker/worker.js) → **Deploy**.
+3. **Storage & Databases → KV → Create a namespace** (e.g. `happwn-subs`).
+4. Worker → **Settings → Bindings → Add → KV namespace**: variable name **`SUBS`**,
+   select your namespace → **Save and deploy**.
+5. Copy your Worker URL, e.g. `https://happwn.<you>.workers.dev`
+   (open it in a browser — it should reply `happwn worker`).
+6. On the site, open **⚙ Settings**, fill in your `User-Agent` + `X-HWID`, and paste your
+   **Worker URL**. Done — no code edits needed.
+
+Now **Create subscription** turns the decrypted link into
+`https://happwn.<you>.workers.dev/sub/<token>` (base64 sub body + QR) — a real
+subscription for any VPN client. Full details: [`worker/README.md`](worker/README.md).
+
+> Want everything under your own account? Fork this repo, enable Pages (Settings → Pages
+> → Source: GitHub Actions), and your site is served from `https://<you>.github.io/happwn/`.
+> Each visitor still plugs in their own Worker URL.
 
 ## Tech
 

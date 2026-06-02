@@ -11,8 +11,11 @@ a browser cannot send) and hosts the configs as a subscription at `/sub/<token>`
 4. Worker -> Settings -> Bindings -> Add -> KV namespace: variable name `SUBS`,
    select `happwn-subs` -> Save and deploy.
 5. Copy the Worker URL (e.g. `https://happwn.<you>.workers.dev`).
-6. If your site origin differs from `https://useruserdev.github.io`, edit `ALLOWED_ORIGIN`
-   at the top of `worker.js`.
+6. Open the site, go to Settings, and paste your Worker URL. Done — no code edits needed.
+
+By default the worker accepts requests from any origin (`ALLOWED_ORIGIN = "*"`), so it
+works with the official site and any fork out of the box. Set `ALLOWED_ORIGIN` to your
+site origin in `worker.js` if you want to restrict browser callers.
 
 ## Deploy (CLI)
 

@@ -7,7 +7,10 @@ const KNOWN_SCHEMES = [
 ];
 const MAX_CONFIGS = 5000;
 
-const ALLOWED_ORIGIN = "https://useruserdev.github.io";
+// "*" lets the worker be used from any happwn site (official or your own fork)
+// with no code edits. CORS is not a security boundary anyway — the size/TTL caps
+// below are. Set this to your site origin if you want to restrict browser callers.
+const ALLOWED_ORIGIN = "*";
 const MAX_BODY = 256 * 1024;        // request body cap
 const MAX_UPSTREAM = 1024 * 1024;   // fetched sub body cap
 const TTL_SECONDS = 7 * 24 * 3600;  // KV expiry
