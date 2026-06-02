@@ -12,6 +12,7 @@ use chacha20poly1305::{ChaCha20Poly1305, Key, KeyInit, Nonce};
 use once_cell::sync::Lazy;
 use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::pkcs8::DecodePrivateKey;
+use rsa::traits::PublicKeyParts; // brings RsaPrivateKey::size() into scope
 use rsa::{Pkcs1v15Encrypt, RsaPrivateKey};
 
 /// Result of decrypting a happ:// link.

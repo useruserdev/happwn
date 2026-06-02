@@ -30,9 +30,6 @@ targets:
     platform: iOS
     sources:
       - path: happwnTests
-    settings:
-      base:
-        SWIFT_OBJC_BRIDGING_HEADER: happwn/Happwn-Bridging-Header.h
     dependencies:
       - target: happwn
       - framework: HappwnCrypto.xcframework
