@@ -7,6 +7,9 @@ ios/HappwnCrypto.xcframework/
 ios/build/
 DerivedData/
 
+# Node
+node_modules/
+
 # macOS
 .DS_Store
 

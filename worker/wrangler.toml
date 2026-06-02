@@ -1,0 +1,9 @@
+name = "happwn"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# Create the namespace once:  wrangler kv namespace create SUBS
+# then paste the returned id below.
+[[kv_namespaces]]
+binding = "SUBS"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"

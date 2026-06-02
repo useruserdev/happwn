@@ -72,6 +72,17 @@ cd ios && xcodegen generate && open happwn.xcodeproj
 2. Sideload it with AltStore, Sideloadly, or TrollStore.
 3. Open the app, set your `User-Agent` and `X-HWID` in Settings, paste a `happ://` link, tap Extract.
 
+## Web
+
+A browser version lives in [`web/`](web/) and deploys to GitHub Pages:
+**https://useruserdev.github.io/happwn/**
+
+It decrypts `happ://` links client-side. To turn the configs into a subscription URL,
+deploy the Cloudflare Worker in [`worker/`](worker/README.md) (free tier), then paste its
+URL into the site's Settings. The Worker fetches the sub URL with your `User-Agent` and
+`X-HWID` (which a browser cannot send) and hosts the result at
+`https://happwn.<you>.workers.dev/sub/<token>` — a real subscription for any VPN client.
+
 ## Tech
 
 - Rust crypto core (`rsa`, `chacha20poly1305`, `base64`) shipped to iOS as a static `.xcframework`.

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>happwn — Happ decrypt</title>
+  <meta name="description" content="Happ decrypt in the browser: decrypt happ:// links and build a subscription URL." />
+  <link rel="icon" href="icon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "node-forge": "https://cdn.jsdelivr.net/npm/node-forge@1.3.1/+esm",
+      "@noble/ciphers/chacha": "https://cdn.jsdelivr.net/npm/@noble/ciphers@1.3.0/chacha/+esm",
+      "qrcode": "https://cdn.jsdelivr.net/npm/qrcode@1.5.4/+esm"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main>
+    <header>
+      <img src="icon.png" alt="" class="logo" />
+      <h1>happwn</h1>
+      <button id="settings-toggle" class="ghost" aria-label="Settings">⚙</button>
+    </header>
+
+    <section id="settings" hidden>
+      <label>User-Agent <input id="ua" placeholder="Happ/1.0" /></label>
+      <label>X-HWID <input id="hwid" placeholder="device id" /></label>
+      <label>Worker URL <input id="worker" placeholder="https://happwn.you.workers.dev" /></label>
+      <p class="hint">Decrypt works without a Worker. To build a subscription URL, deploy the Worker and paste its URL here.</p>
+    </section>
+
+    <textarea id="link" rows="4" placeholder="happ://crypt…"></textarea>
+    <div class="row">
+      <button id="decrypt">Decrypt</button>
+      <button id="build" disabled>Create subscription</button>
+    </div>
+
+    <p id="status" class="status"></p>
+    <pre id="decoded" class="decoded" hidden></pre>
+
+    <section id="result" hidden>
+      <div class="result-head">
+        <span id="result-meta"></span>
+        <button id="copy-sub" class="ghost">Copy link</button>
+      </div>
+      <code id="sub-url" class="sub-url"></code>
+      <canvas id="qr" width="180" height="180"></canvas>
+      <ul id="configs" class="configs"></ul>
+    </section>
+
+    <footer>
+      <a href="https://github.com/useruserdev/happwn">source</a>
+    </footer>
+  </main>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
