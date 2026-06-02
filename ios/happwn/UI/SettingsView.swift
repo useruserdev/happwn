@@ -20,6 +20,13 @@ struct SettingsView: View {
                     .font(.footnote)
                     .foregroundColor(.secondary)
             }
+            Section {
+                NavigationLink {
+                    AboutView()
+                } label: {
+                    Label("О приложении", systemImage: "info.circle")
+                }
+            }
         }
         .navigationTitle("Настройки")
     }

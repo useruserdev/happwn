@@ -1,40 +1,99 @@
-# happwn
+<div align="center">
 
-iOS config extractor for Happ subscriptions, distributed as a sideloaded `.ipa`.
+<img src="assets/icon.png" width="128" alt="happwn icon" />
 
-Paste a `happ://` link → it is decrypted → the embedded subscription URL is fetched
-with your `User-Agent` + `X-HWID` → the configs (vless / vmess / trojan / ss / …) are
-listed and exportable.
+# happwn — Happ Decrypt for iOS
 
-## How it works
+**Happ decryptor & subscription config extractor, packaged as a sideloaded iOS `.ipa`.**
 
-- `crypt` / `crypt2` / `crypt3` / `crypt4`: base64 → RSA PKCS#1 v1.5.
-- `crypt5`: CDAB permutation → RSA key recovery → ChaCha20-Poly1305 → base64.
-- Decryption runs in a Rust core (`rust/`) shipped to iOS as a static `.xcframework`.
-- The subscription server requires the `Happ` `User-Agent` and your `X-HWID`; set both
-  in **Settings**.
+Decrypt `happ://` links (`crypt`, `crypt2`, `crypt3`, `crypt4`, `crypt5`), follow the
+embedded subscription URL with the required `User-Agent` + `X-HWID`, and extract every
+config — right on your iPhone.
 
-## Build
+[![build](https://github.com/useruserdev/happwn/actions/workflows/build.yml/badge.svg)](https://github.com/useruserdev/happwn/actions/workflows/build.yml)
+[![platform](https://img.shields.io/badge/platform-iOS%2016%2B-blue)](#install)
+[![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 
-CI builds an unsigned `.ipa` on every push to `main`
-(Actions → `build` → `ios` job → `happwn-ipa` artifact). The `rust-tests` job runs the
-crypto tests on every push.
+</div>
 
-Local (macOS):
+---
+
+## ✨ Features
+
+- 🔓 **Full Happ decrypt** — all schemes: `crypt`, `crypt2`, `crypt3`, `crypt4`, `crypt5`.
+- 🌐 **Subscription fetch** — sends your `User-Agent` and `X-HWID` so the server doesn't reject the request.
+- 📦 **Config extraction** — pulls `vless`, `vmess`, `trojan`, `ss`, `ssr`, `hysteria2`, `tuic`, `wireguard` URIs.
+- 📋 **Copy & share** — copy one / copy all / share sheet / raw-body fallback.
+- 🔒 **On-device** — decryption runs locally in a Rust core; no servers of our own, no analytics.
+- 📱 **Sideloaded** — installs without the App Store via AltStore / Sideloadly / TrollStore.
+
+## 🔍 How it works
+
+```
+happ://crypt…  ──decrypt (Rust core + embedded keys)──▶  subscription URL
+                                                           │
+                  GET with headers  User-Agent + X-HWID    ▼   (rejected without them)
+                                                           │
+                                                           ▼
+                                          subscription body (configs)
+                                                           │
+                                                           ▼
+                          parse ▶ vless / vmess / …  ▶ copy · share · export
+```
+
+| Scheme | Pipeline |
+| ------ | -------- |
+| `crypt` · `crypt2` · `crypt3` · `crypt4` | base64 → RSA PKCS#1 v1.5 |
+| `crypt5` | CDAB permutation → RSA key recovery → ChaCha20-Poly1305 → base64 |
+
+## 🛠 Build
+
+CI builds an **unsigned, versioned `.ipa`** on every push to `main` and publishes it to
+**[Releases](https://github.com/useruserdev/happwn/releases/latest)** (and as a build
+artifact). The `rust-tests` job runs the crypto tests against real vectors on every
+push — no Mac required.
+
+Run the crypto tests anywhere Rust is installed:
+
+```bash
+cargo test --manifest-path rust/Cargo.toml
+```
+
+Build locally on macOS:
 
 ```bash
 bash scripts/build-xcframework.sh
 cd ios && xcodegen generate && open happwn.xcodeproj
 ```
 
-Run the crypto tests on any platform with Rust:
+## 📲 Install
 
-```bash
-cargo test --manifest-path rust/Cargo.toml
-```
+1. Download the latest `happwn-*.ipa` from **[Releases](https://github.com/useruserdev/happwn/releases/latest)**.
+2. Sideload it with **AltStore**, **Sideloadly**, or **TrollStore**.
+3. Open the app, set your `User-Agent` and `X-HWID` in **Settings**, paste a `happ://` link, tap **Extract**.
 
-Install the `.ipa` with AltStore, Sideloadly, or TrollStore.
+## 🧱 Tech
 
-## License
+- **Rust** crypto core (`rsa`, `chacha20poly1305`, `base64`) shipped to iOS as a static `.xcframework`.
+- **SwiftUI** app, `URLSession` networking.
+- **XcodeGen** project, **GitHub Actions** (macOS) build pipeline.
 
-Apache-2.0.
+## ⚠️ Disclaimer
+
+For interoperability and personal use with your own subscriptions. You are responsible
+for how you use it.
+
+## 📄 License
+
+[Apache-2.0](LICENSE).
+
+---
+
+<div align="center">
+<sub>
+
+**Keywords:** Happ decrypt · Happ decryptor · Happ decrypt iOS · decrypt happ link ·
+happ crypt5 · happ crypt4 · Happ subscription · happ config extractor · vless vmess sub
+
+</sub>
+</div>
