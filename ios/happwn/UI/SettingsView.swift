@@ -31,6 +31,32 @@ struct SettingsView: View {
             }
 
             Section {
+                Toggle("Уведомления об обновлениях", isOn: $settings.notificationsEnabled)
+                    .onChange(of: settings.notificationsEnabled) { enabled in
+                        if enabled {
+                            Task { await NotificationService().requestAuthorization() }
+                        }
+                    }
+                Toggle("Фоновое обновление", isOn: $settings.backgroundRefreshEnabled)
+                    .onChange(of: settings.backgroundRefreshEnabled) { enabled in
+                        if enabled {
+                            BackgroundRefresh.schedule(minInterval: settings.minRefreshInterval.seconds)
+                        } else {
+                            BackgroundRefresh.cancel()
+                        }
+                    }
+                Picker("Проверять не чаще чем", selection: $settings.minRefreshInterval) {
+                    ForEach(RefreshInterval.allCases) { interval in
+                        Text(interval.label).tag(interval)
+                    }
+                }
+            } header: {
+                Text("Обновления")
+            } footer: {
+                Text("iOS запускает фоновое обновление по своему усмотрению, ориентируясь на то, как часто ты открываешь приложение — точный интервал не гарантирован.")
+            }
+
+            Section {
                 NavigationLink {
                     AboutView()
                 } label: {
