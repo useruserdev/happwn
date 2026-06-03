@@ -25,6 +25,7 @@ or a ready-to-use subscription link.
 | **iOS**    | Sideload the `.ipa` from [**Releases**](../../releases/latest) (AltStore · Sideloadly · TrollStore) |
 | **Web**    | Open the console → [**useruserdev.github.io/happwn**](https://useruserdev.github.io/happwn/) |
 | **Subscription** | Deploy your own free Cloudflare [**Worker**](worker/README.md), paste its URL in Settings |
+| **Docs**   | Guides & reference → [**docs/**](docs/) |
 
 <br>
 
