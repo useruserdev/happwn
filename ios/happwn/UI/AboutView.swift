@@ -11,66 +11,74 @@ struct AboutView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
-                Image("AppLogo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 112, height: 112)
-                    .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
-                    .shadow(color: .black.opacity(0.15), radius: 8, y: 4)
-                    .padding(.top, 24)
+            VStack(spacing: 18) {
+                header
 
-                VStack(spacing: 4) {
-                    Text("happwn").font(.largeTitle.bold())
-                    Text(version).font(.subheadline).foregroundColor(.secondary)
-                    Text("Happ subscription config extractor")
-                        .font(.callout).foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-
-                VStack(alignment: .leading, spacing: 12) {
-                    section(
-                        "What it does",
-                        "Paste a happ:// link — happwn decrypts it, follows the embedded "
-                        + "subscription URL with your User-Agent and X-HWID, and extracts every "
-                        + "config (vless, vmess, trojan, ss, …) for copy and export."
+                VStack(alignment: .leading, spacing: 14) {
+                    infoCard(
+                        "Что делает",
+                        "Вставь happ://-ссылку — happwn расшифрует её, перейдёт по встроенному "
+                        + "URL подписки с твоими User-Agent и X-HWID и достанет каждый конфиг "
+                        + "(vless, vmess, trojan, ss …) для копирования и экспорта."
                     )
-                    section(
-                        "Schemes",
-                        "crypt, crypt2, crypt3, crypt4 (RSA PKCS#1 v1.5) and crypt5 "
-                        + "(RSA → ChaCha20-Poly1305). Decryption runs fully on-device."
+                    infoCard(
+                        "Схемы",
+                        "crypt, crypt2, crypt3, crypt4 (RSA PKCS#1 v1.5) и crypt5 "
+                        + "(RSA → ChaCha20-Poly1305). Расшифровка целиком на устройстве."
                     )
-                    section(
-                        "Privacy",
-                        "No analytics, no servers of our own. Requests go only to the "
-                        + "subscription URL contained in your link."
+                    infoCard(
+                        "Приватность",
+                        "Без аналитики и собственных серверов. Запросы идут только на URL "
+                        + "подписки из твоей ссылки."
                     )
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
 
                 Link(destination: repoURL) {
                     Label("Source on GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                        .font(.headline)
                         .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
                 }
                 .buttonStyle(.bordered)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 Text("Apache-2.0")
-                    .font(.footnote).foregroundColor(.secondary)
-                    .padding(.bottom, 24)
+                    .font(.footnote).foregroundStyle(.secondary)
+                    .padding(.bottom, 8)
             }
-            .padding(.horizontal)
+            .padding(Layout.screenPadding)
         }
-        .navigationTitle("About")
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("О приложении")
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private func section(_ title: String, _ body: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.headline)
-            Text(body).font(.callout).foregroundColor(.secondary)
+    private var header: some View {
+        VStack(spacing: 8) {
+            Image("AppLogo")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 104, height: 104)
+                .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+                .shadow(color: Color.accentColor.opacity(0.35), radius: 14, y: 6)
+                .padding(.top, 16)
+
+            Text("happwn").font(.largeTitle.bold())
+            Text(version).font(.subheadline).foregroundStyle(.secondary)
+            Text("Happ subscription config extractor")
+                .font(.callout).foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+    }
+
+    private func infoCard(_ title: String, _ body: String) -> some View {
+        GroupedCard {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(title).font(.headline)
+                Text(body).font(.callout).foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
         }
     }
 }
