@@ -6,8 +6,10 @@ struct HappwnApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
                 .environmentObject(settings)
+                .tint(settings.accent.color)
+                .preferredColorScheme(settings.appearance.colorScheme)
         }
     }
 }
