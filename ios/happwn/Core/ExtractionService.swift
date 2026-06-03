@@ -6,6 +6,20 @@ struct ExtractionService {
     var client: SubscriptionClient = SubscriptionClient()
 
     func run(link: String, userAgent: String, hwid: String) async throws -> ExtractionResult {
+        let trimmedLink = link.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        // Plain subscription URL: skip decryption, fetch and parse directly.
+        if trimmedLink.hasPrefix("http://") || trimmedLink.hasPrefix("https://") {
+            let data = try await client.fetch(urlString: trimmedLink, userAgent: userAgent, hwid: hwid)
+            let configs = ConfigParser.parse(data)
+            return ExtractionResult(
+                mode: "url",
+                source: trimmedLink,
+                configs: configs,
+                rawBody: configs.isEmpty ? String(data: data, encoding: .utf8) : nil
+            )
+        }
+
         let decrypted = try decryptLink(link)
         let value = decrypted.value.trimmingCharacters(in: .whitespacesAndNewlines)
 

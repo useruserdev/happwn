@@ -3,8 +3,10 @@ import UIKit
 
 struct ExtractView: View {
     @EnvironmentObject private var settings: Settings
+    @EnvironmentObject private var store: SubscriptionStore
     @StateObject private var vm = ExtractionViewModel()
     @FocusState private var fieldFocused: Bool
+    @State private var savedLink: String?
 
     private var isLoading: Bool {
         if case .loading = vm.state { return true }
@@ -14,7 +16,7 @@ struct ExtractView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
-                Text("Вставь happ://-ссылку — расшифрую и достану конфиги")
+                Text("Вставь happ://-ссылку или URL подписки — достану конфиги")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .padding(.horizontal, 6)
@@ -69,7 +71,10 @@ struct ExtractView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, 40)
         case .success(let result):
-            ResultsView(result: result)
+            VStack(alignment: .leading, spacing: 18) {
+                ResultsView(result: result)
+                saveButton(result)
+            }
         case .failure(let message):
             errorCard(message)
         }
@@ -85,6 +90,33 @@ struct ExtractView: View {
         .foregroundStyle(.tertiary)
         .frame(maxWidth: .infinity)
         .padding(.top, 48)
+    }
+
+    @ViewBuilder private func saveButton(_ result: ExtractionViewModel.ExtractionResultView) -> some View {
+        let isSaved = savedLink == vm.link
+        Button {
+            let now = Date()
+            let sub = SavedSubscription(
+                name: SavedSubscription.defaultName(from: result.source),
+                link: vm.link,
+                lastConfigs: result.configs.map(\.uri),
+                mode: result.mode,
+                source: result.source,
+                lastCheckedAt: now,
+                lastChangedAt: now
+            )
+            store.add(sub)
+            savedLink = vm.link
+            Haptics.tap()
+        } label: {
+            Label(isSaved ? "Подписка сохранена" : "Сохранить подписку",
+                  systemImage: isSaved ? "checkmark.circle.fill" : "plus.circle")
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 13)
+        }
+        .buttonStyle(.bordered)
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .disabled(isSaved)
     }
 
     private func errorCard(_ message: String) -> some View {
