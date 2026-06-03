@@ -43,6 +43,26 @@ function refreshBuildEnabled() {
   $("build").disabled = !(decrypted && store.worker);
 }
 
+function renderCommand() {
+  const ua = store.ua || "Happ/1.0";
+  const hwid = store.hwid || "<your-hwid>";
+  const sub = decrypted && /^https?:\/\//i.test(decrypted.value.trim())
+    ? decrypted.value.trim()
+    : "<decrypt a happ:// link first>";
+
+  const el = $("cmd");
+  el.innerHTML = "";
+  const span = (cls, txt) => { const s = document.createElement("span"); s.className = cls; s.textContent = txt; return s; };
+  const line = (...nodes) => { const d = document.createElement("div"); d.className = "cline"; nodes.forEach((n) => d.append(n)); el.append(d); };
+
+  line(span("c-prompt", "$ "), span("c-cmd", "curl -fsSL"), span("c-cont", " \\"));
+  line(span("c-flag", "    -H "), span("c-str", `"User-Agent: ${ua}"`), span("c-cont", " \\"));
+  line(span("c-flag", "    -H "), span("c-str", `"X-HWID: ${hwid}"`), span("c-cont", " \\"));
+  line(span("c-url", `    "${sub}"`), span("c-pipe", " | "), span("c-cmd", "base64 -d"));
+
+  el.dataset.copy = `curl -fsSL -H "User-Agent: ${ua}" -H "X-HWID: ${hwid}" "${sub}" | base64 -d`;
+}
+
 function schemeOf(uri) {
   const i = uri.indexOf("://");
   return i > 0 ? uri.slice(0, i) : uri.split(":")[0];
@@ -61,7 +81,8 @@ async function onDecrypt() {
     decrypted = decryptLink(link, await keys());
     stage("st-decrypt", "done");
     $("decoded").hidden = false;
-    $("decoded").textContent = `mode: ${decrypted.mode}\n${decrypted.value}`;
+    $("decoded-value").textContent = decrypted.value;
+    renderCommand();
     setStatus(
       store.worker ? "Decrypted. Ready to forge." : "Decrypted. Add a Worker URL in settings to forge a subscription.",
       true
@@ -136,8 +157,8 @@ function initSettings() {
   $("ua").value = store.ua;
   $("hwid").value = store.hwid;
   $("worker").value = store.worker;
-  $("ua").oninput = (e) => { store.ua = e.target.value; };
-  $("hwid").oninput = (e) => { store.hwid = e.target.value; };
+  $("ua").oninput = (e) => { store.ua = e.target.value; renderCommand(); };
+  $("hwid").oninput = (e) => { store.hwid = e.target.value; renderCommand(); };
   $("worker").oninput = (e) => { store.worker = e.target.value; refreshBuildEnabled(); };
   $("settings-toggle").onclick = () => { $("settings").hidden = !$("settings").hidden; };
 }
@@ -145,5 +166,8 @@ function initSettings() {
 $("decrypt").onclick = onDecrypt;
 $("build").onclick = onBuild;
 $("copy-sub").onclick = () => navigator.clipboard.writeText($("sub-url").textContent);
+$("copy-decoded").onclick = () => navigator.clipboard.writeText($("decoded-value").textContent);
+$("copy-cmd").onclick = () => navigator.clipboard.writeText($("cmd").dataset.copy || "");
 initSettings();
 refreshBuildEnabled();
+renderCommand();

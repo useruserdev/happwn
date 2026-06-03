@@ -73,7 +73,13 @@
       </ol>
 
       <p id="status" class="status"></p>
-      <pre id="decoded" class="decoded" hidden></pre>
+      <div id="decoded" class="decoded" hidden>
+        <div class="decoded-head">
+          <span class="decoded-label"><span class="ok-dot"></span> DECRYPTED</span>
+          <button id="copy-decoded" class="btn small">Copy</button>
+        </div>
+        <code id="decoded-value" class="decoded-value"></code>
+      </div>
     </section>
 
     <section id="result" class="panel output reveal" hidden>
@@ -96,7 +102,17 @@
       <ul id="configs" class="configs"></ul>
     </section>
 
-    <footer class="reveal" style="--d:.12s">
+    <section class="panel terminal reveal" style="--d:.1s">
+      <div class="term-bar">
+        <span class="dots"><i class="r"></i><i class="a"></i><i class="g"></i></span>
+        <span class="term-title">manual extraction — pull configs yourself</span>
+        <button id="copy-cmd" class="btn small">Copy</button>
+      </div>
+      <pre id="cmd" class="term-body"></pre>
+      <p class="term-note">No Worker needed — run this in your terminal. It sends the Happ <b>User-Agent</b> + <b>X-HWID</b> the server requires; <code>base64 -d</code> decodes the response into raw configs.</p>
+    </section>
+
+    <footer class="reveal" style="--d:.16s">
       <span class="dim">on-device decrypt · open source</span>
       <a href="https://github.com/useruserdev/happwn">github.com/useruserdev/happwn</a>
     </footer>
