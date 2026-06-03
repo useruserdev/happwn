@@ -8,8 +8,8 @@ settings:
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
     INFOPLIST_KEY_CFBundleDisplayName: happwn
-    MARKETING_VERSION: "1.0.2"
-    CURRENT_PROJECT_VERSION: "3"
+    MARKETING_VERSION: "1.0.3"
+    CURRENT_PROJECT_VERSION: "4"
     SWIFT_VERSION: "5.0"
     TARGETED_DEVICE_FAMILY: "1,2"
 targets:
@@ -18,14 +18,10 @@ targets:
     platform: iOS
     sources:
       - path: happwn
-        excludes:
-          - "Info.plist"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.happwn.app
         SWIFT_OBJC_BRIDGING_HEADER: happwn/Happwn-Bridging-Header.h
-        GENERATE_INFOPLIST_FILE: NO
-        INFOPLIST_FILE: happwn/Info.plist
     dependencies:
       - framework: HappwnCrypto.xcframework
         embed: false
