@@ -160,7 +160,24 @@ function initSettings() {
   $("ua").oninput = (e) => { store.ua = e.target.value; renderCommand(); };
   $("hwid").oninput = (e) => { store.hwid = e.target.value; renderCommand(); };
   $("worker").oninput = (e) => { store.worker = e.target.value; refreshBuildEnabled(); };
-  $("settings-toggle").onclick = () => { $("settings").hidden = !$("settings").hidden; };
+
+  const panel = $("settings");
+  const gear = $("settings-toggle");
+  // hide from layout only once the collapse transition finishes
+  panel.addEventListener("transitionend", (e) => {
+    if (e.propertyName === "max-height" && panel.classList.contains("collapsed")) panel.hidden = true;
+  });
+  gear.onclick = () => {
+    if (panel.classList.contains("collapsed")) {
+      panel.hidden = false;
+      void panel.offsetHeight; // reflow so the open transition runs
+      panel.classList.remove("collapsed");
+      gear.classList.add("active");
+    } else {
+      panel.classList.add("collapsed");
+      gear.classList.remove("active");
+    }
+  };
 }
 
 function wireCopy(btnId, getText) {
