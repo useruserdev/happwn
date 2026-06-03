@@ -7,9 +7,26 @@ protocol SubscriptionNotifying {
     func notifyChange(subscription: SavedSubscription, added: Int, removed: Int) async
 }
 
+/// Lets change notifications appear as a banner even while the app is open
+/// (refreshes happen on launch / pull-to-refresh, i.e. in the foreground).
+final class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = NotificationDelegate()
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                willPresent notification: UNNotification,
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .list])
+    }
+}
+
 struct NotificationService: SubscriptionNotifying {
     /// userInfo key carrying the subscription id (for deep-linking on tap).
     static let subscriptionIDKey = "subscriptionID"
+
+    /// Show notifications while the app is in the foreground.
+    func enableForegroundPresentation() {
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+    }
 
     /// Request authorization; returns whether it was granted.
     @discardableResult
