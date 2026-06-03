@@ -163,11 +163,20 @@ function initSettings() {
   $("settings-toggle").onclick = () => { $("settings").hidden = !$("settings").hidden; };
 }
 
+function wireCopy(btnId, getText) {
+  const btn = $(btnId);
+  btn.onclick = async () => {
+    try { await navigator.clipboard.writeText(getText()); } catch { /* ignore */ }
+    btn.classList.add("copied");
+    setTimeout(() => btn.classList.remove("copied"), 1200);
+  };
+}
+
 $("decrypt").onclick = onDecrypt;
 $("build").onclick = onBuild;
-$("copy-sub").onclick = () => navigator.clipboard.writeText($("sub-url").textContent);
-$("copy-decoded").onclick = () => navigator.clipboard.writeText($("decoded-value").textContent);
-$("copy-cmd").onclick = () => navigator.clipboard.writeText($("cmd").dataset.copy || "");
+wireCopy("copy-sub", () => $("sub-url").textContent);
+wireCopy("copy-decoded", () => $("decoded-value").textContent);
+wireCopy("copy-cmd", () => $("cmd").dataset.copy || "");
 initSettings();
 refreshBuildEnabled();
 renderCommand();

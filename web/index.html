@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>happwn — Happ decrypt console</title>
   <meta name="description" content="Happ decrypt in the browser: decrypt happ:// links and forge a subscription URL." />
+  <meta name="theme-color" content="#06070e" />
   <link rel="icon" href="icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,7 +31,7 @@
         <img src="icon.png" alt="" class="logo" />
         <div class="brand-text">
           <h1>happwn</h1>
-          <p class="tag">HAPP&nbsp;DECRYPT&nbsp;<span class="slash">//</span>&nbsp;SUBSCRIPTION&nbsp;FORGE</p>
+          <p class="tag">HAPP DECRYPT <span class="slash">//</span> SUBSCRIPTION FORGE</p>
         </div>
       </div>
       <div class="topbar-right">
@@ -76,7 +77,10 @@
       <div id="decoded" class="decoded" hidden>
         <div class="decoded-head">
           <span class="decoded-label"><span class="ok-dot"></span> DECRYPTED</span>
-          <button id="copy-decoded" class="btn small">Copy</button>
+          <button id="copy-decoded" class="iconbtn" aria-label="Copy" title="Copy">
+            <svg class="ic ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            <svg class="ic ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+          </button>
         </div>
         <code id="decoded-value" class="decoded-value"></code>
       </div>
@@ -93,8 +97,13 @@
 
       <div class="sub-row">
         <div class="sub-main">
-          <code id="sub-url" class="sub-url"></code>
-          <button id="copy-sub" class="btn small">Copy link</button>
+          <div class="sub-line">
+            <code id="sub-url" class="sub-url"></code>
+            <button id="copy-sub" class="iconbtn" aria-label="Copy link" title="Copy link">
+              <svg class="ic ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <svg class="ic ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+            </button>
+          </div>
         </div>
         <div class="qr-frame"><canvas id="qr" width="172" height="172"></canvas></div>
       </div>
@@ -105,11 +114,13 @@
     <section class="panel terminal reveal" style="--d:.1s">
       <div class="term-bar">
         <span class="dots"><i class="r"></i><i class="a"></i><i class="g"></i></span>
-        <span class="term-title">manual extraction — pull configs yourself</span>
-        <button id="copy-cmd" class="btn small">Copy</button>
+        <span class="term-title">manual — when a client shows “App not supported”</span>
+        <button id="copy-cmd" class="iconbtn" aria-label="Copy command" title="Copy command">
+          <svg class="ic ic-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <svg class="ic ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+        </button>
       </div>
       <pre id="cmd" class="term-body"></pre>
-      <p class="term-note">No Worker needed — run this in your terminal. It sends the Happ <b>User-Agent</b> + <b>X-HWID</b> the server requires; <code>base64 -d</code> decodes the response into raw configs.</p>
     </section>
 
     <footer class="reveal" style="--d:.16s">
