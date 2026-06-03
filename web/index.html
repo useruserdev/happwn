@@ -3,9 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>happwn — Happ decrypt</title>
-  <meta name="description" content="Happ decrypt in the browser: decrypt happ:// links and build a subscription URL." />
+  <title>happwn — Happ decrypt console</title>
+  <meta name="description" content="Happ decrypt in the browser: decrypt happ:// links and forge a subscription URL." />
   <link rel="icon" href="icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
   <script type="importmap">
   {
@@ -18,43 +21,87 @@
   </script>
 </head>
 <body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="scan" aria-hidden="true"></div>
+
   <main>
-    <header>
-      <img src="icon.png" alt="" class="logo" />
-      <h1>happwn</h1>
-      <button id="settings-toggle" class="ghost" aria-label="Settings">⚙</button>
+    <header class="topbar reveal">
+      <div class="brand">
+        <img src="icon.png" alt="" class="logo" />
+        <div class="brand-text">
+          <h1>happwn</h1>
+          <p class="tag">HAPP&nbsp;DECRYPT&nbsp;<span class="slash">//</span>&nbsp;SUBSCRIPTION&nbsp;FORGE</p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="vchip" id="vchip">v1.0</span>
+        <button id="settings-toggle" class="icon-btn" aria-label="Settings">
+          <span class="gear">⚙</span>
+        </button>
+      </div>
     </header>
 
-    <section id="settings" hidden>
-      <label>User-Agent <input id="ua" placeholder="Happ/1.0" /></label>
-      <label>X-HWID <input id="hwid" placeholder="device id" /></label>
-      <label>Worker URL <input id="worker" placeholder="https://happwn.you.workers.dev" /></label>
-      <p class="hint">Decrypt works without a Worker. To build a subscription URL, deploy the Worker and paste its URL here.</p>
+    <section id="settings" class="panel settings" hidden>
+      <div class="panel-title">// IDENTITY</div>
+      <div class="settings-grid">
+        <label>User-Agent<input id="ua" spellcheck="false" placeholder="Happ/1.0" /></label>
+        <label>X-HWID<input id="hwid" spellcheck="false" placeholder="device id" /></label>
+        <label class="wide">Worker URL<input id="worker" spellcheck="false" placeholder="https://happwn.you.workers.dev" /></label>
+      </div>
+      <p class="hint">Decrypt runs in your browser, no setup. To forge a subscription URL, deploy your own Cloudflare Worker and paste its URL here.</p>
     </section>
 
-    <textarea id="link" rows="4" placeholder="happ://crypt…"></textarea>
-    <div class="row">
-      <button id="decrypt">Decrypt</button>
-      <button id="build" disabled>Create subscription</button>
-    </div>
+    <section class="panel console reveal" style="--d:.06s">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
 
-    <p id="status" class="status"></p>
-    <pre id="decoded" class="decoded" hidden></pre>
+      <div class="field-label"><span class="blink">▮</span> INPUT&nbsp;/&nbsp;happ:// link</div>
+      <textarea id="link" rows="3" spellcheck="false" placeholder="happ://crypt5/…"></textarea>
 
-    <section id="result" hidden>
-      <div class="result-head">
-        <span id="result-meta"></span>
-        <button id="copy-sub" class="ghost">Copy link</button>
+      <div class="actions">
+        <button id="decrypt" class="btn primary">
+          <span class="lbl">Decrypt</span>
+          <span class="arr">→</span>
+        </button>
+        <button id="build" class="btn ghost" disabled>Forge subscription</button>
       </div>
-      <code id="sub-url" class="sub-url"></code>
-      <canvas id="qr" width="180" height="180"></canvas>
+
+      <ol class="pipeline" aria-hidden="true">
+        <li class="stage" id="st-decrypt"><i class="dot"></i><span>DECRYPT</span></li>
+        <li class="stage" id="st-fetch"><i class="dot"></i><span>FETCH</span></li>
+        <li class="stage" id="st-forge"><i class="dot"></i><span>FORGE</span></li>
+      </ol>
+
+      <p id="status" class="status"></p>
+      <pre id="decoded" class="decoded" hidden></pre>
+    </section>
+
+    <section id="result" class="panel output reveal" hidden>
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+
+      <div class="output-head">
+        <div class="panel-title">// SUBSCRIPTION&nbsp;READY</div>
+        <span id="result-meta" class="meta"></span>
+      </div>
+
+      <div class="sub-row">
+        <div class="sub-main">
+          <code id="sub-url" class="sub-url"></code>
+          <button id="copy-sub" class="btn small">Copy link</button>
+        </div>
+        <div class="qr-frame"><canvas id="qr" width="172" height="172"></canvas></div>
+      </div>
+
       <ul id="configs" class="configs"></ul>
     </section>
 
-    <footer>
-      <a href="https://github.com/useruserdev/happwn">source</a>
+    <footer class="reveal" style="--d:.12s">
+      <span class="dim">on-device decrypt · open source</span>
+      <a href="https://github.com/useruserdev/happwn">github.com/useruserdev/happwn</a>
     </footer>
   </main>
+
   <script type="module" src="app.js"></script>
 </body>
 </html>
