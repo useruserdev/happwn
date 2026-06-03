@@ -64,10 +64,11 @@ jobs:
       - name: Package .ipa
         working-directory: ios
         run: |
-          VERSION="1.0.${{ github.run_number }}"
+          APP="build/happwn.xcarchive/Products/Applications/happwn.app"
+          VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$APP/Info.plist")
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           mkdir -p build/Payload
-          cp -R build/happwn.xcarchive/Products/Applications/happwn.app build/Payload/
+          cp -R "$APP" build/Payload/
           (cd build && zip -qry "happwn-${VERSION}.ipa" Payload)
 
       - name: Upload .ipa artifact
