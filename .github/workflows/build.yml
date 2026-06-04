@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths: [rust/**, ios/**, scripts/**, .github/workflows/build.yml]
   pull_request:
+    paths: [rust/**, ios/**, scripts/**, .github/workflows/build.yml]
   workflow_dispatch:
 
 jobs:
