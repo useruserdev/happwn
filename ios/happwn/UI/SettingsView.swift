@@ -1,7 +1,12 @@
 import SwiftUI
+import UserNotifications
+import UIKit
 
 struct SettingsView: View {
     @EnvironmentObject private var settings: Settings
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var notifStatus: UNAuthorizationStatus = .notDetermined
 
     private let columns = [GridItem(.adaptive(minimum: 44), spacing: 14)]
 
@@ -34,9 +39,33 @@ struct SettingsView: View {
                 Toggle("Уведомления об обновлениях", isOn: $settings.notificationsEnabled)
                     .onChange(of: settings.notificationsEnabled) { enabled in
                         if enabled {
-                            Task { await NotificationService().requestAuthorization() }
+                            Task {
+                                await NotificationService().requestAuthorization()
+                                await refreshNotifStatus()
+                            }
                         }
                     }
+                HStack {
+                    Text("Разрешение").foregroundStyle(.secondary)
+                    Spacer()
+                    Text(notifStatusText)
+                        .foregroundStyle(notifStatus == .authorized ? .green : .secondary)
+                }
+                if settings.notificationsEnabled && (notifStatus == .denied || notifStatus == .notDetermined) {
+                    Button {
+                        if notifStatus == .notDetermined {
+                            Task {
+                                await NotificationService().requestAuthorization()
+                                await refreshNotifStatus()
+                            }
+                        } else if let url = URL(string: UIApplication.openSettingsURLString) {
+                            openURL(url)
+                        }
+                    } label: {
+                        Label(notifStatus == .notDetermined ? "Запросить разрешение" : "Включить в Настройках iOS",
+                              systemImage: "bell.badge")
+                    }
+                }
             } header: {
                 Text("Обновления")
             } footer: {
@@ -55,6 +84,25 @@ struct SettingsView: View {
             }
         }
         .navigationTitle("Настройки")
+        .keyboardDoneButton()
+        .task { await refreshNotifStatus() }
+        .onChange(of: scenePhase) { phase in
+            if phase == .active { Task { await refreshNotifStatus() } }
+        }
+    }
+
+    private var notifStatusText: String {
+        switch notifStatus {
+        case .authorized, .provisional, .ephemeral: return "Разрешены"
+        case .denied: return "Запрещены"
+        case .notDetermined: return "Не запрошены"
+        @unknown default: return "—"
+        }
+    }
+
+    @MainActor
+    private func refreshNotifStatus() async {
+        notifStatus = await NotificationService().authorizationStatus()
     }
 
     private func labeledField(icon: String, tint: Color, title: String,

@@ -178,6 +178,29 @@ struct PrimaryButton: View {
     }
 }
 
+// MARK: - Keyboard dismissal
+
+/// Adds a "Готово" button above the keyboard to dismiss it — needed for
+/// multiline fields where Return can't close the keyboard.
+struct KeyboardDoneToolbar: ViewModifier {
+    func body(content: Content) -> some View {
+        content.toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
+                Spacer()
+                Button("Готово") {
+                    UIApplication.shared.sendAction(
+                        #selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                }
+                .fontWeight(.semibold)
+            }
+        }
+    }
+}
+
+extension View {
+    func keyboardDoneButton() -> some View { modifier(KeyboardDoneToolbar()) }
+}
+
 // MARK: - Haptics
 
 enum Haptics {
