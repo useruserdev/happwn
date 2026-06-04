@@ -3,7 +3,9 @@ name: web
 on:
   push:
     branches: [main]
+    paths: [web/**, .github/workflows/web.yml]
   pull_request:
+    paths: [web/**, .github/workflows/web.yml]
   workflow_dispatch:
 
 jobs:
