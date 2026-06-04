@@ -66,10 +66,25 @@ struct SettingsView: View {
                               systemImage: "bell.badge")
                     }
                 }
+                Toggle("Фоновое обновление", isOn: $settings.backgroundRefreshEnabled)
+                    .onChange(of: settings.backgroundRefreshEnabled) { enabled in
+                        if enabled {
+                            BackgroundRefresh.schedule(minInterval: settings.minRefreshInterval.seconds)
+                        } else {
+                            BackgroundRefresh.cancel()
+                        }
+                    }
+                if settings.backgroundRefreshEnabled {
+                    Picker("Проверять не чаще чем", selection: $settings.minRefreshInterval) {
+                        ForEach(RefreshInterval.allCases) { interval in
+                            Text(interval.label).tag(interval)
+                        }
+                    }
+                }
             } header: {
                 Text("Обновления")
             } footer: {
-                Text("Подписки обновляются при открытии приложения и по pull-to-refresh. Если набор конфигов изменился — придёт уведомление.")
+                Text("Подписки обновляются при открытии, по pull-to-refresh и в фоне. Фоновую проверку iOS запускает по своему усмотрению (примерно раз в несколько часов, точный интервал не гарантирован). При изменении конфигов придёт уведомление.")
             }
 
             Section {

@@ -10,9 +10,16 @@ struct HappwnApp: App {
     init() {
         let settings = Settings()
         let store = SubscriptionStore()
+        let coordinator = RefreshCoordinator(store: store, settings: settings)
         _settings = StateObject(wrappedValue: settings)
         _store = StateObject(wrappedValue: store)
-        _coordinator = StateObject(wrappedValue: RefreshCoordinator(store: store, settings: settings))
+        _coordinator = StateObject(wrappedValue: coordinator)
+
+        // Must register before the app finishes launching.
+        BackgroundRefresh.register(
+            coordinator: { coordinator },
+            minInterval: { settings.minRefreshInterval.seconds }
+        )
     }
 
     var body: some Scene {
@@ -28,10 +35,20 @@ struct HappwnApp: App {
                     if settings.notificationsEnabled {
                         await NotificationService().requestAuthorization()
                     }
+                    if settings.backgroundRefreshEnabled {
+                        BackgroundRefresh.schedule(minInterval: settings.minRefreshInterval.seconds)
+                    }
                 }
                 .onChange(of: scenePhase) { phase in
-                    if phase == .active {
+                    switch phase {
+                    case .active:
                         Task { await coordinator.refreshAll() }
+                    case .background:
+                        if settings.backgroundRefreshEnabled {
+                            BackgroundRefresh.schedule(minInterval: settings.minRefreshInterval.seconds)
+                        }
+                    default:
+                        break
                     }
                 }
         }
