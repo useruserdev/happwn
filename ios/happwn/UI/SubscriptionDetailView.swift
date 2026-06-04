@@ -19,6 +19,7 @@ struct SubscriptionDetailView: View {
         }
         .navigationTitle(sub?.name ?? "Подписка")
         .navigationBarTitleDisplayMode(.inline)
+        .keyboardDoneButton()
         .onAppear { store.markSeen(id) }
     }
 

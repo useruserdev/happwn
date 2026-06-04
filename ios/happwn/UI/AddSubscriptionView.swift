@@ -50,6 +50,7 @@ struct AddSubscriptionView: View {
             }
             .navigationTitle("Новая подписка")
             .navigationBarTitleDisplayMode(.inline)
+            .keyboardDoneButton()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Отмена") { dismiss() }

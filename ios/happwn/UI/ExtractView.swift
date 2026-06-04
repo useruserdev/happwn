@@ -34,6 +34,7 @@ struct ExtractView: View {
         }
         .background(Color(.systemGroupedBackground))
         .navigationTitle("happwn")
+        .keyboardDoneButton()
     }
 
     private var linkSection: some View {
