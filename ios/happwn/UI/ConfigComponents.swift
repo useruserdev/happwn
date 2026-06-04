@@ -51,20 +51,14 @@ struct ConfigListCard: View {
     }
 
     private func row(index: Int, uri: String) -> some View {
-        let scheme = ConfigEntry(uri: uri).scheme
+        let entry = ConfigEntry(uri: uri)
         return Button {
-            UIPasteboard.general.string = uri
-            Haptics.tap()
-            copiedIndex = index
-            Task {
-                try? await Task.sleep(nanoseconds: 1_400_000_000)
-                if copiedIndex == index { copiedIndex = nil }
-            }
+            copy(uri, at: index)
         } label: {
             HStack(spacing: 12) {
                 IconBadge(systemName: "",
-                          color: ProtocolStyle.color(for: scheme),
-                          text: ProtocolStyle.badge(for: scheme))
+                          color: ProtocolStyle.color(for: entry.scheme),
+                          text: ProtocolStyle.badge(for: entry.scheme))
                 Text(uri)
                     .font(.system(.caption, design: .monospaced))
                     .foregroundStyle(.primary)
@@ -78,6 +72,31 @@ struct ConfigListCard: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .contextMenu {
+            Button {
+                copy(uri, at: index)
+            } label: {
+                Label("Скопировать конфиг", systemImage: "doc.on.doc")
+            }
+            if let host = entry.host {
+                Button {
+                    UIPasteboard.general.string = host
+                    Haptics.tap()
+                } label: {
+                    Label("Скопировать IP · \(host)", systemImage: "network")
+                }
+            }
+        }
+    }
+
+    private func copy(_ value: String, at index: Int) {
+        UIPasteboard.general.string = value
+        Haptics.tap()
+        copiedIndex = index
+        Task {
+            try? await Task.sleep(nanoseconds: 1_400_000_000)
+            if copiedIndex == index { copiedIndex = nil }
+        }
     }
 }
 
