@@ -38,6 +38,12 @@ struct HappwnApp: App {
                     if settings.backgroundRefreshEnabled {
                         BackgroundRefresh.schedule(minInterval: settings.minRefreshInterval.seconds)
                     }
+                    // Refresh on cold launch. scenePhase starts at .active, so the
+                    // .onChange below never fires for the initial launch — without
+                    // this, updates (and their notifications) only appear after a
+                    // manual pull-to-refresh. onChange still covers later
+                    // background→active returns.
+                    await coordinator.refreshAll()
                 }
                 .onChange(of: scenePhase) { phase in
                     switch phase {
